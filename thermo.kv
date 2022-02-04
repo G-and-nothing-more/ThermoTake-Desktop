@@ -1,0 +1,36 @@
+#:kivy 1.0
+#:import kivy kivy
+#:import win kivy.core.window
+
+BoxLayout:
+    orientation: 'horizontal'
+    padding: 10
+    Image:
+        margin: 20
+        source: 'temp.png'
+        size_hint: (2, 1)
+        allow_stretch: True
+    BoxLayout:
+        id: 'sidebar'
+        size_hint: (1, 1)
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+        Widget:
+            size_hint: (1, 1)
+        Button:
+            text: "Activate display"
+            font_size: dp(25)
+            size_hint: (1, 1)
+            on_press: app.activateDisplayBTN()
+        Button:
+            text: "Send message"
+            font_size: dp(25)
+            size_hint: (1, 1)
+            on_press: app.sendMessageBTN()
+        TextInput:
+            id: "phoneNumBox"
+            text: "Phone Number"
+            size_hint: (1, 0.4)
+        Widget:
+            size_hint: (1, 3)
