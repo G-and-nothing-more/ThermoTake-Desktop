@@ -4,6 +4,7 @@
 
 BoxLayout:
     orientation: 'horizontal'
+    phoneNum: '655-666-6999'
     padding: 10
     Image:
         margin: 20
@@ -11,12 +12,13 @@ BoxLayout:
         size_hint: (2, 1)
         allow_stretch: True
     BoxLayout:
-        id: 'sidebar'
+        id: sidebar
         size_hint: (1, 1)
         orientation: 'vertical'
         padding: 10
         spacing: 10
-        Widget:
+        Button:
+            text: "Temp"
             size_hint: (1, 1)
         Button:
             text: "Activate display"
@@ -29,8 +31,8 @@ BoxLayout:
             size_hint: (1, 1)
             on_press: app.sendMessageBTN()
         TextInput:
-            id: "phoneNumBox"
-            text: "Phone Number"
+            id: phoneNumBox
+            text: root.phoneNum
             size_hint: (1, 0.4)
         Widget:
             size_hint: (1, 3)
