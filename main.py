@@ -94,20 +94,20 @@ class ThermoApp(App):
         return (m.group(1), m.group(2), m.group(3))
 
 
-   ##message alert function
+   # message alert function
     def msgAlert(subject, body,to):
-        msg=EmailMessage()
+        msg = EmailMessage()
         msg.set_content(body)
-        msg['subject']=subject
-        msg['to']=to
-        user="-----------@gmail.com"
-        msg['from']=user
-        password="--------"
+        msg['subject'] = subject
+        msg['to'] = to
+        user = "-----------@gmail.com"
+        msg['from'] = user
+        password = "--------"
 
         ##setting server
-        server=smtplib.SMTP("smtp.gmail.com",587)
+        server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
-        server.login(user,password)
+        server.login(user, password)
         server.send_message(msg)
         server.quit()
         
