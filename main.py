@@ -2,7 +2,7 @@
 
 import kivy
 import re
-# from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
+from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 from kivy.properties import StringProperty
 import matplotlib.pyplot as plt
 from glob import glob
