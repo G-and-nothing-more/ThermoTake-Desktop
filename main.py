@@ -7,14 +7,9 @@ import re
 from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 from kivy.properties import StringProperty
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from glob import glob
-from random import randint
-from os.path import join, dirname
 from kivy.app import App
 from kivy.logger import Logger
 from kivy.properties import StringProperty
-from kivy.uix.widget import Widget
 from kivy.uix.floatlayout import FloatLayout
 from kivy.clock import Clock
 
@@ -32,11 +27,14 @@ line, = ax.plot(x, y, 'r-')
 
 
 def updateYData():
+    """Update the graphed data."""
     global y
-    y = y[1:] + [y[0]] # Change this line
+    y = y[1:] + [y[0]]
+    y[-1] = y[-1]  # Change this line
 
 
 def animationTick(i):
+    """Process all changes needed to update the graph."""
     global y
     updateYData()
     line.set_ydata(y)
@@ -68,24 +66,18 @@ class ThermoApp(App):
         """Buttonpress method for Display."""
         print("burf")
 
-        #TODO: Error popup on invalid number
+        # TODO: Error popup on invalid number
     def sendMessageBTN(self):
         """Buttonpress method for Send Message."""
-        print("bort")
-        area, code1, code2 = self.getTLFN()
-        
-        #self.getTLFN is a tuple of string??? 
-        #if so then will convert that to string later #TODO for Rupanti
+        area, code1, code2 = self.getTLFN()  # Each of these is a string
 
         print(area)
         print(code1)
         print(code2)
 
-        #### how to check the temperature??????? 
         # if temp>300F then
-        self.msgAlert("Alert","Tempterature is above 300F", "--------@txt.att.net")
-
- 
+        if y[-1] >= 300:
+            self.msgAlert("Alert", "Tempterature is above 300F", "--------@txt.att.net")
 
     def getTLFN(self):
         """Return a tuple of the 3 parts of a phone number."""
@@ -93,9 +85,8 @@ class ThermoApp(App):
                       self.root.phoneNum)
         return (m.group(1), m.group(2), m.group(3))
 
-
-   # message alert function
-    def msgAlert(subject, body,to):
+    def msgAlert(subject, body, to):
+        """Message alert function."""
         msg = EmailMessage()
         msg.set_content(body)
         msg['subject'] = subject
@@ -104,16 +95,12 @@ class ThermoApp(App):
         msg['from'] = user
         password = "--------"
 
-        ##setting server
+        # setting server
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
         server.login(user, password)
         server.send_message(msg)
         server.quit()
-        
-
-
-
 
 
 if __name__ == '__main__':
