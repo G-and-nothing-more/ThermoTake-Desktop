@@ -3,20 +3,9 @@
 #:import win kivy.core.window
 
 <CarrierDropDown@DropDown>:
-    Button:
-        text: 'My first Item'
+    Widget:
         size_hint_y: None
         height: 44
-        on_release: root.select('item1')
-    Label:
-        text: 'Unselectable item'
-        size_hint_y: None
-        height: 44
-    Button:
-        text: 'My second Item'
-        size_hint_y: None
-        height: 44
-        on_release: root.select('item2')
 
 BoxLayout:
     orientation: 'horizontal'
@@ -48,6 +37,7 @@ BoxLayout:
             on_press: app.sendMessageBTN()
         Button:
             id: carrierDropButton
+            font_size: dp(25)
             text: "Select Carrier"
         CarrierDropDown:
             id: carrierDrop
