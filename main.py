@@ -12,11 +12,17 @@ from kivy.logger import Logger
 from kivy.properties import StringProperty
 from kivy.uix.floatlayout import FloatLayout
 from kivy.clock import Clock
+from kivy.uix.dropdown import DropDown
+from kivy.uix.button import Button
 
 kivy.require('2.0.0')
-# https://stackoverflow.com/questions/44905416/how-to-get-started-use-matplotlib-in-kivy
-x = [w for w in range(-4, 1)]
-y = [5, 12, 6, 9, 15]
+
+listLength = 20
+x = [w for w in range(-4, -4+listLength)]
+y = [40]*listLength
+debugDict = {"Horseradish Wireless": "hrw",
+             "ATMNT": "atmnt",
+             "Picklebox Cellular": 'pbc'}
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
@@ -33,17 +39,43 @@ def updateYData():
     y[-1] = y[-1]  # Change this line
 
 
+def addNewValue(_y):
+    """Add a new value to the front of the graph."""
+    global y
+    y = y[1:] + [_y]
+
+
 def animationTick(i):
     """Process all changes needed to update the graph."""
     global y
     updateYData()
+    repaintGraph()
+    return line,
+
+
+def repaintGraph():
+    """Update graph to match new data."""
     line.set_ydata(y)
     fig.canvas.draw()
     fig.canvas.flush_events()
-    return line,
 
 # Here's how to do error messages with Logger
 # Logger.exception('Pictures: Unable to load <%s>' % filename)
+
+
+class CarrierDropDown(DropDown):
+    """Used to select which phone carrier to use."""
+
+    def __init__(self, **kwargs):
+        super(CarrierDropDown, self).__init__()
+        for key in debugDict.keys():
+            button = Button()
+            button.text = key
+            button.bind(on_release=self.select(debugDict[key]))
+            self.add_widget(button)
+
+    pass
+
 
 class ThermoApp(App):
     """Top-level application class."""
@@ -55,6 +87,11 @@ class ThermoApp(App):
         box.add_widget(FigureCanvasKivyAgg(plt.gcf()))
         Clock.schedule_interval(animationTick, 0.5)
         animationTick(0.5)
+        carrierDropButton = root.ids.carrierDropButton
+        dropdown = root.ids.carrierDrop
+        carrierDropButton.bind(on_press=dropdown.open)
+        dropdown.bind(on_select=lambda instance, x:
+                      setattr(carrierDropButton, 'text', x))
         # root.ids.sidebar.ids.phoneNumBox.text = self.teleNum
         # ...stuff with root
 
