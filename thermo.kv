@@ -7,6 +7,9 @@
         size_hint_y: None
         height: 44
 
+<NumericInput@TextInput>:
+    size_hint_y: 0.4
+
 BoxLayout:
     orientation: 'horizontal'
     phoneNum: '655-666-6999'
@@ -25,6 +28,7 @@ BoxLayout:
         Label:
             id: statusTicker
             text: "Status: Nominal"
+            font_size: dp(25)
         Button:
             text: "Activate display"
             font_size: dp(25)
@@ -41,9 +45,35 @@ BoxLayout:
             text: "Select Carrier"
         CarrierDropDown:
             id: carrierDrop
+        BoxLayout:
+            orientation: 'horizontal'
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    text: 'Lower Limit'
+                    font_size: dp(20)
+                NumericInput:
+                    multiline: False
+                    id: lowerText
+                    text: '5'
+                    size_hint_y: None
+                    height: 40
+            BoxLayout:
+                orientation: 'vertical'
+                Label:
+                    text: 'Upper Limit'
+                    font_size: dp(20)
+                NumericInput:
+                    multiline: False
+                    id: upperText
+                    text: '50'
+                    size_hint_y: None
+                    height: 40
         TextInput:
             id: phoneNumBox
             text: root.phoneNum
-            size_hint: (1, 0.4)
+            size_hint: (1, None)
+            height: 40
+            multiline: False
         Widget:
             size_hint: (1, 3)
