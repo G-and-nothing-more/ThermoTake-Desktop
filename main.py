@@ -30,9 +30,10 @@ if platform not in "linux, linux2":
 
 kivy.require('2.0.0')
 
-listLength = 20
-x = [w for w in range(-1*listLength, 0)]
+listLength = 300
+x = [w for w in range(listLength, 0, -1)]
 y = [40]*listLength
+status = "Nominal"
 debugDict = {"hrw": "Horseradish Wireless",
              "atmnt": "ATMNT",
              'pbc': "Picklebox Cellular"}
@@ -82,55 +83,37 @@ def newReadLine():
         data.flush()
 
 
-def updateYData():
-    """Update the graphed data."""
-    addNewValue(((y[-1]) ** 1.5 + -1) % 65)
+class ThermoApp(App):
+    """Top-level application class."""
 
+    def updateYData(self):
+        """Update the graphed data."""
+        self.addNewValue(((y[1]) ** 1.5 + -1) % 65)
 
-def addNewValue(_y):
-    """Add a new value to the front of the graph."""
-    global y
-    y = y[1:] + [_y]
+    def addNewValue(self, _y):
+        """Add a new value to the front of the graph."""
+        global y
+        y = [_y] + y[:-1]
 
+    def animationTick(self, i):
+        """Process all changes needed to update the graph."""
+        global y
+        self.updateYData()
+        self.repaintGraph()
+        self.statusTicker.text = "Status: " + status
 
-def animationTick(i):
-    """Process all changes needed to update the graph."""
-    global y
-    updateYData()
-    repaintGraph()
-    return line,
+        if y[-1] >= 300:
+            self.msgAlert("Alert", "Tempterature is above 300F", "--------@txt.att.net")
+        return line,
 
-
-def repaintGraph():
-    """Update graph to match new data."""
-    line.set_ydata(y)
-    fig.canvas.draw()
-    fig.canvas.flush_events()
+    def repaintGraph(self):
+        """Update graph to match new data."""
+        line.set_ydata(y)
+        fig.canvas.draw()
+        fig.canvas.flush_events()
 
 # Here's how to do error messages with Logger
 # Logger.exception('Pictures: Unable to load <%s>' % filename)
-
-
-class CarrierDropDown(DropDown):
-    """Used to select which phone carrier to use."""
-
-    def __init__(self, **kwargs):
-        """Create a dropdown button for each carrier."""
-        super(CarrierDropDown, self).__init__()
-        for key in debugDict.keys():
-            button = Button()
-            button.text = debugDict[key]
-            button.height = 44
-            button.size_hint_y = None
-            button.cid = key
-            button.bind(on_release=lambda btn: self.select(btn.cid))
-            self.add_widget(button)
-
-    pass
-
-
-class ThermoApp(App):
-    """Top-level application class."""
 
     def build(self):
         """Bind controls and major elements to instance variables."""
@@ -138,8 +121,8 @@ class ThermoApp(App):
         self.statusTicker = root.ids.statusTicker
         box = root.ids.graphBox
         box.add_widget(FigureCanvasKivyAgg(plt.gcf()))
-        Clock.schedule_interval(animationTick, 0.5)
-        animationTick(0.5)
+        Clock.schedule_interval(self.animationTick, 0.5)
+        self.animationTick(0.5)
         carrierDropButton = root.ids.carrierDropButton
         dropdown = root.ids.carrierDrop
         carrierDropButton.bind(on_press=dropdown.open)
@@ -166,8 +149,6 @@ class ThermoApp(App):
         print(code2)
 
         # if temp>300F then
-        if y[-1] >= 300:
-            self.msgAlert("Alert", "Tempterature is above 300F", "--------@txt.att.net")
 
     def getTLFN(self):
         """Return a tuple of the 3 parts of a phone number."""
@@ -191,6 +172,24 @@ class ThermoApp(App):
         server.login(user, password)
         server.send_message(msg)
         server.quit()
+
+
+class CarrierDropDown(DropDown):
+    """Used to select which phone carrier to use."""
+
+    def __init__(self, **kwargs):
+        """Create a dropdown button for each carrier."""
+        super(CarrierDropDown, self).__init__()
+        for key in debugDict.keys():
+            button = Button()
+            button.text = debugDict[key]
+            button.height = 44
+            button.size_hint_y = None
+            button.cid = key
+            button.bind(on_release=lambda btn: self.select(btn.cid))
+            self.add_widget(button)
+
+    pass
 
 
 if __name__ == '__main__':
