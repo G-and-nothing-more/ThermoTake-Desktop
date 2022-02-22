@@ -124,15 +124,18 @@ class ThermoApp(App):
         self.repaintGraph()
         self.statusTicker.text = "Status: " + status
 
+        self.textCooldown = max(self.textCooldown-1, 0)
         if y[-1]:
-            if y[-1] >= self.upper:  # TODO: Make temperature ranges dynamic.
+            if y[-1] >= self.upper and self.textCooldown < 1:
                 self.msgAlert(
                     "Alert", "Tempterature is above upper limit.",
                     "--------@txt.att.net")
-            if y[-1] <= self.lower:
+                self.textCooldown = 60
+            if y[-1] <= self.lower and self.textCooldown < 1:
                 self.msgAlert(
                     "Alert", "Tempterature is below lower limit.",
                     "--------@txt.att.net")
+                self.textCooldown = 60
         return line,
 
     def repaintGraph(self):
@@ -159,8 +162,10 @@ class ThermoApp(App):
         dropdown.bind(on_select=lambda instance, x:
                       setattr(carrierDropButton, 'text', debugDict[x]))
         y = [null() for w in range(listLength)]
+
         self.lower = -5
         self.upper = 50
+        self.textCooldown = 60
         root.ids.upperText.bind(text=self.tryUpdateUpper)
         root.ids.lowerText.bind(text=self.tryUpdateLower)
         root.ids.upperText.text = str(self.upper)
