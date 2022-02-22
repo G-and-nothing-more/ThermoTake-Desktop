@@ -34,8 +34,8 @@ def null():
     return
 
 listLength = 300
-x = [w for w in range(listLength, 0, -1)]
-y = [null()]*listLength
+x = [w for w in range(-1 * listLength, 0, 1)]
+y = [w for w in range(listLength)]
 status = "Nominal"
 debugDict = {"hrw": "Horseradish Wireless",
              "atmnt": "ATMNT",
@@ -43,7 +43,8 @@ debugDict = {"hrw": "Horseradish Wireless",
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
-plt.ylim(-5,70)
+plt.ylim(-12, 65)
+plt.xlim(-1 * listLength, 0)
 plt.ylabel("Temperature")
 plt.xlabel("Seconds")
 plt.title("Thermometer Reading")
@@ -96,6 +97,8 @@ class ThermoApp(App):
     def updateYData(self):
         """Update the graphed data."""
         newData = newReadLine()
+        if platform in "linux, linux2":
+            newData = 20
         if (newData):
             self.addNewValue(newData)
         elif (newData == 'error'):
@@ -104,7 +107,7 @@ class ThermoApp(App):
     def addNewValue(self, _y):
         """Add a new value to the front of the graph."""
         global y
-        y = [_y] + y[:-1]
+        y = y[1:] + [_y]
 
     def animationTick(self, i):
         """Process all changes needed to update the graph."""
@@ -115,9 +118,14 @@ class ThermoApp(App):
         self.statusTicker.text = "Status: " + status
 
         if y[-1]:
-            if y[-1] >= 300:
+            if y[-1] >= 300:  # TODO: Make temperature ranges dynamic.
                 self.msgAlert(
-                    "Alert", "Tempterature is above 300F", "--------@txt.att.net")
+                    "Alert", "Tempterature is above upper limit.",
+                    "--------@txt.att.net")
+            if y[-1] <= -300:
+                self.msgAlert(
+                    "Alert", "Tempterature is below lower limit.",
+                    "--------@txt.att.net")
         return line,
 
     def repaintGraph(self):
@@ -131,6 +139,7 @@ class ThermoApp(App):
 
     def build(self):
         """Bind controls and major elements to instance variables."""
+        global y
         root = self.root
         self.statusTicker = root.ids.statusTicker
         box = root.ids.graphBox
@@ -142,6 +151,7 @@ class ThermoApp(App):
         carrierDropButton.bind(on_press=dropdown.open)
         dropdown.bind(on_select=lambda instance, x:
                       setattr(carrierDropButton, 'text', debugDict[x]))
+        y = [null() for w in range(listLength)]
         # root.ids.sidebar.ids.phoneNumBox.text = self.teleNum
         # ...stuff with root
 
