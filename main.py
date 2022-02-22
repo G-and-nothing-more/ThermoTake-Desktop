@@ -125,11 +125,11 @@ class ThermoApp(App):
         self.statusTicker.text = "Status: " + status
 
         if y[-1]:
-            if y[-1] >= 300:  # TODO: Make temperature ranges dynamic.
+            if y[-1] >= self.upper:  # TODO: Make temperature ranges dynamic.
                 self.msgAlert(
                     "Alert", "Tempterature is above upper limit.",
                     "--------@txt.att.net")
-            if y[-1] <= -300:
+            if y[-1] <= self.lower:
                 self.msgAlert(
                     "Alert", "Tempterature is below lower limit.",
                     "--------@txt.att.net")
@@ -159,12 +159,31 @@ class ThermoApp(App):
         dropdown.bind(on_select=lambda instance, x:
                       setattr(carrierDropButton, 'text', debugDict[x]))
         y = [null() for w in range(listLength)]
-        # root.ids.sidebar.ids.phoneNumBox.text = self.teleNum
+        self.lower = -5
+        self.upper = 50
+        root.ids.upperText.bind(text=self.tryUpdateUpper)
+        root.ids.lowerText.bind(text=self.tryUpdateLower)
+        root.ids.upperText.text = str(self.upper)
+        root.ids.lowerText.text = str(self.lower)
         # ...stuff with root
 
     def on_pause(self):
         """TODO: Figure out when this runs. It was recommended."""
         return True
+
+    def tryUpdateUpper(self, e, s):
+        try:
+            f = float(s)
+            self.upper = f
+        except:
+            pass
+
+    def tryUpdateLower(self, e, s):
+        try:
+            f = float(s)
+            self.lower = f
+        except:
+            pass
 
     def activateDisplayBTN(self):
         """Buttonpress method for Display."""
