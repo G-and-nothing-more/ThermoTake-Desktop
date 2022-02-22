@@ -71,7 +71,6 @@ def newReadLine():
         transmission = rcv.split(':')
 
         # try to parse the data into numerals from string
-        msg = transmission[0]
 
         try:
             msg = float(transmission[0])
@@ -79,9 +78,15 @@ def newReadLine():
 
             # If the mod 64 checkSum matches, print the msg
             if (msg * 100) % 64 == checkSum:
+                data.flush()
                 print(msg)
                 return msg
+            elif (msg <= -125):
+                #print('error')
+                data.flush()
+                return -127
             else:
+                data.flush()
                 print('WRONG')
         # If not dont yell at me
         except:
@@ -96,10 +101,12 @@ class ThermoApp(App):
     def updateYData(self):
         """Update the graphed data."""
         newData = newReadLine()
+
         if (newData):
-            self.addNewValue(newData)
-        elif (newData == 'error'):
-            return
+            if (newData == -127):
+                print('error')
+            else:
+                self.addNewValue(newData)
 
     def addNewValue(self, _y):
         """Add a new value to the front of the graph."""
