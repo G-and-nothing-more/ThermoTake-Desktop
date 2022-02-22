@@ -102,12 +102,8 @@ class ThermoApp(App):
     def updateYData(self):
         """Update the graphed data."""
         newData = newReadLine()
-<<<<<<< HEAD
         if platform in "linux, linux2":
             newData = 20
-=======
-
->>>>>>> 78f321fc9e19286dbd60d9ecb9ef5f07a4cac02f
         if (newData):
             if (newData == -127):
                 print('error')
