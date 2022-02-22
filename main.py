@@ -30,9 +30,12 @@ if platform not in "linux, linux2":
 
 kivy.require('2.0.0')
 
+def null():
+    return
+
 listLength = 300
 x = [w for w in range(listLength, 0, -1)]
-y = [40]*listLength
+y = [null()]*listLength
 status = "Nominal"
 debugDict = {"hrw": "Horseradish Wireless",
              "atmnt": "ATMNT",
@@ -92,13 +95,11 @@ class ThermoApp(App):
 
     def updateYData(self):
         """Update the graphed data."""
-         newData = newReadLine()
+        newData = newReadLine()
         if (newData):
-            addNewValue(newData)
+            self.addNewValue(newData)
         elif (newData == 'error'):
             return
-
-
 
     def addNewValue(self, _y):
         """Add a new value to the front of the graph."""
@@ -108,12 +109,15 @@ class ThermoApp(App):
     def animationTick(self, i):
         """Process all changes needed to update the graph."""
         global y
+        print("tick")
         self.updateYData()
         self.repaintGraph()
         self.statusTicker.text = "Status: " + status
 
-        if y[-1] >= 300:
-            self.msgAlert("Alert", "Tempterature is above 300F", "--------@txt.att.net")
+        if y[-1]:
+            if y[-1] >= 300:
+                self.msgAlert(
+                    "Alert", "Tempterature is above 300F", "--------@txt.att.net")
         return line,
 
     def repaintGraph(self):
