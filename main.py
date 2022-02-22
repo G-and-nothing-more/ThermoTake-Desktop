@@ -5,15 +5,16 @@ import kivy
 import time
 import serial
 import smtplib
-import matplotlib.pyplot as plt
 from sys import platform
+import matplotlib.pyplot as plt
 from email.message import EmailMessage
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.logger import Logger
+from kivy.properties import StringProperty
 from kivy.uix.button import Button
 from kivy.uix.dropdown import DropDown
-from kivy.properties import StringProperty
+from kivy.uix.textinput import TextInput
 from kivy.uix.floatlayout import FloatLayout
 from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 
@@ -178,8 +179,6 @@ class ThermoApp(App):
         print(code1)
         print(code2)
 
-        # if temp>300F then
-
     def getTLFN(self):
         """Return a tuple of the 3 parts of a phone number."""
         m = re.search(r'\(?(\d{3})[) \- ]?(\d{3})[- ]?(\d{4})',
@@ -220,6 +219,21 @@ class CarrierDropDown(DropDown):
             self.add_widget(button)
 
     pass
+
+
+class NumericInput(TextInput):
+    """An input that only allows numbers."""
+
+    forbiddenInputs = re.compile('[^0-9]')
+
+    def insert_text(self, substring, from_undo=False):
+        """Override allowed text."""
+        pat = self.forbiddenInputs
+        if '.' in self.text:
+            s = re.sub(pat, '', substring)
+        else:
+            s = '.'.join([re.sub(pat, '', s) for s in substring.split('.', 1)])
+        return super(NumericInput, self).insert_text(s, from_undo=from_undo)
 
 
 if __name__ == '__main__':
