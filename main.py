@@ -38,8 +38,9 @@ kivy.require('2.0.0')
 def null():
     return
 
-listLength = 300
-x = [w for w in range(-1 * listLength, 0, 1)]
+
+listLength = 600
+x = [w/2 for w in range(-1 * listLength, 0, 1)]
 y = [w for w in range(listLength)]
 
 lines = open("Carrierlookup.txt").readlines()
@@ -56,7 +57,7 @@ print(carrierDict)
 fig = plt.figure()
 ax = fig.add_subplot(111)
 plt.ylim(-12, 65)
-plt.xlim(-1 * listLength, 0)
+plt.xlim(-0.5 * listLength, 0)
 plt.ylabel("Temperature")
 plt.xlabel("Seconds")
 plt.title("Thermometer Reading")
