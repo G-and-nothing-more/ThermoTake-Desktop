@@ -175,6 +175,7 @@ class ThermoApp(App):
         dropdown.bind(on_select=lambda instance, x:
                       self.setCarrier(x))
         self.carrierKey = list(carrierDict.keys())[0]
+        Clock.schedule_once(lambda x: dropdown.open(), 0.5)
 
         y = [null() for w in range(listLength)]
         self.status = "Nominal"
@@ -233,15 +234,15 @@ class ThermoApp(App):
         msg = EmailMessage()
         #read text file with all info and add them to dictionary
         file = open("gmailGIT.txt", "r")
-        d = {}
-        for line in file:
-            x = line.split(",")
-            a = x[0]
-            b = x[1]
-            c = len(b)-1     #get rid of \n
-            b = b[0:c]       #new b without \n
-            d[a] = b
-
+        # d = {}
+        # for line in file:
+        #     x = line.split(",")
+        #     a = x[0]
+        #     b = x[1]
+        #     c = len(b)-1     #get rid of \n
+        #     b = b[0:c]       #new b without \n
+        #     d[a] = b
+        d = {w.split(',')[0] : (w.split(',')[1]).strip() for w in lines}
         user = d["gmail"]
         password = d["password"]
         msg.set_content(text)
