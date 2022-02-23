@@ -232,7 +232,8 @@ class ThermoApp(App):
                       self.root.phoneNum)
         return (m.group(1), m.group(2), m.group(3))
 
-    def msgAlert():
+    def msgAlert(self, text):
+        """Send the text to the email address associated with the entered number."""
         msg = EmailMessage()
         #read text file with all info and add them to dictionary
         file = open("gmailGIT.txt", "r")
@@ -247,12 +248,12 @@ class ThermoApp(App):
 
         user = d["gmail"]
         password = d["password"]
-        msg.set_content("Tempterature is above 300F")
+        msg.set_content(text)
         msg['subject'] = "Alert"
         msg['from'] = user
 
         #taking phone number input from user
-        area, code1, code2  = self.getTLFN()
+        area, code1, code2 = self.getTLFN()
         phoneNumber = area+code1+code2
 
         file = open("Carrierlookup.txt", "r")
