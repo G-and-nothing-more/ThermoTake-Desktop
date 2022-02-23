@@ -114,6 +114,7 @@ def newReadLine():
 
 class ThermoApp(App):
     """Top-level application class."""
+    phoneNum = StringProperty("123-456-7890")
 
     def updateYData(self):
         """Update the graphed data."""
@@ -230,7 +231,7 @@ class ThermoApp(App):
     def getTLFN(self):
         """Return a tuple of the 3 parts of a phone number."""
         m = re.search(r'\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})',
-                      self.root.phoneNum)
+                      self.root.ids.phoneNumBox.text)
         return (m.group(1), m.group(2), m.group(3))
 
     def msgAlert(self, text):
@@ -275,9 +276,7 @@ class ThermoApp(App):
             if(key ==usersCarrier):
                 smsGateway = lookUPTable[key]
 
-
         msg['to'] = phoneNumber+smsGateway
-
 
         ##setting server
         server = smtplib.SMTP("smtp.gmail.com", 587)
