@@ -38,9 +38,17 @@ listLength = 300
 x = [w for w in range(-1 * listLength, 0, 1)]
 y = [w for w in range(listLength)]
 status = "Nominal"
+
+lines = open("Carrierlookup.txt").readlines()
+carrierDict = dict()
+for line in lines:
+    tup = line.split(',')
+    carrierDict[tup[1].strip()] = tup[0].strip()
 debugDict = {"hrw": "Horseradish Wireless",
              "atmnt": "ATMNT",
              'pbc': "Picklebox Cellular"}
+
+print(carrierDict)
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
@@ -165,7 +173,7 @@ class ThermoApp(App):
         dropdown = root.ids.carrierDrop
         carrierDropButton.bind(on_press=dropdown.open)
         dropdown.bind(on_select=lambda instance, x:
-                      setattr(carrierDropButton, 'text', debugDict[x]))
+                      setattr(carrierDropButton, 'text', carrierDict[x]))
         y = [null() for w in range(listLength)]
 
         self.lower = -5
@@ -240,9 +248,9 @@ class CarrierDropDown(DropDown):
     def __init__(self, **kwargs):
         """Create a dropdown button for each carrier."""
         super(CarrierDropDown, self).__init__()
-        for key in debugDict.keys():
+        for key in carrierDict.keys():
             button = Button()
-            button.text = debugDict[key]
+            button.text = carrierDict[key]
             button.height = 44
             button.size_hint_y = None
             button.cid = key
