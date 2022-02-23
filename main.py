@@ -175,7 +175,7 @@ class ThermoApp(App):
         dropdown.bind(on_select=lambda instance, x:
                       self.setCarrier(x))
         self.carrierKey = list(carrierDict.keys())[0]
-        Clock.schedule_once(lambda x: dropdown.open(), 0.5)
+        # Clock.schedule_once(lambda x: dropdown.open(self.carrierDropButton), 0.5)
 
         y = [null() for w in range(listLength)]
         self.status = "Nominal"
