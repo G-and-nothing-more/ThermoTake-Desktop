@@ -6,6 +6,7 @@ import time
 import serial
 import smtplib
 from sys import platform
+from pathlib import Path
 import matplotlib.pyplot as plt
 from email.message import EmailMessage
 from kivy.app import App
@@ -23,9 +24,12 @@ from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 #       correct COM port on your machine.
 ###
 
+debugMode = Path("debugmode.txt").is_file()
+print(debugMode)
+
 port = 'COM5'
 serialPort, data = 0,0
-if platform not in "linux, linux2":
+if not debugMode:
     serialPort = serial.Serial(port=port, baudrate=9600, timeout=1, stopbits=1)
     data = io.TextIOWrapper(io.BufferedRWPair(serialPort, serialPort, 1), newline="\r\n", line_buffering=False)
 
@@ -115,7 +119,7 @@ class ThermoApp(App):
     def updateYData(self):
         """Update the graphed data."""
         newData = newReadLine()
-        if platform in "linux, linux2":
+        if debugMode:
             newData = 20
         if (newData):
             if (newData == -127):
@@ -158,6 +162,7 @@ class ThermoApp(App):
         fig.canvas.flush_events()
 
     def setCarrier(self, newKey):
+        """Change the internal carrier tracker variable."""
         self.carrierKey = newKey
         setattr(self.carrierDropButton, 'text', carrierDict[newKey])
 
@@ -190,7 +195,6 @@ class ThermoApp(App):
         root.ids.upperText.text = str(self.upper)
         root.ids.lowerText.text = str(self.lower)
         self.animationTick(0.5)
-        # ...stuff with root
 
     def on_pause(self):
         """TODO: Figure out when this runs. It was recommended."""
