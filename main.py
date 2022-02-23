@@ -118,12 +118,15 @@ class ThermoApp(App):
         """Update the graphed data."""
         newData = newReadLine()
         if debugMode:
+
             newData = 20
         if (newData):
             if (newData == -127):
                 self.addNewValue(null())
+                self.status = "Sensor unplugged"
                 print('error')
             elif (newData >= -10 and newData <= 100):
+                self.status = "Nominal"
                 self.addNewValue(newData)
 
     def addNewValue(self, _y):
