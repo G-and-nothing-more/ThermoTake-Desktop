@@ -41,7 +41,6 @@ def null():
 listLength = 300
 x = [w for w in range(-1 * listLength, 0, 1)]
 y = [w for w in range(listLength)]
-status = "Nominal"
 
 lines = open("Carrierlookup.txt").readlines()
 carrierDict = dict()
@@ -138,7 +137,7 @@ class ThermoApp(App):
         print("tick")
         self.updateYData()
         self.repaintGraph()
-        self.statusTicker.text = "Status: " + status
+        self.statusTicker.text = "Status: " + self.status
 
         self.textCooldown = max(self.textCooldown-1, 0)
         if y[-1]:
@@ -182,6 +181,7 @@ class ThermoApp(App):
         self.carrierKey = list(carrierDict.keys())[0]
 
         y = [null() for w in range(listLength)]
+        self.status = "Nominal"
 
         self.lower = -5
         self.upper = 50
@@ -228,27 +228,61 @@ class ThermoApp(App):
 
     def getTLFN(self):
         """Return a tuple of the 3 parts of a phone number."""
-        m = re.search(r'\(?(\d{3})[) \- ]?(\d{3})[- ]?(\d{4})',
+        m = re.search(r'\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})',
                       self.root.phoneNum)
         return (m.group(1), m.group(2), m.group(3))
 
-    def msgAlert(subject, body, to):
-        """Message alert function."""
+    def msgAlert():
         msg = EmailMessage()
-        msg.set_content(body)
-        msg['subject'] = subject
-        msg['to'] = to
-        user = "-----------@gmail.com"
-        msg['from'] = user
-        password = "--------"
+        #read text file with all info and add them to dictionary
+        file = open("gmailGIT.txt", "r")
+        d = {}
+        for line in file:
+            x = line.split(",")
+            a = x[0]
+            b = x[1]
+            c = len(b)-1     #get rid of \n
+            b = b[0:c]       #new b without \n
+            d[a] = b
 
-        # setting server
+        user = d["gmail"]
+        password = d["password"]
+        msg.set_content("Tempterature is above 300F")
+        msg['subject'] = "Alert"
+        msg['from'] = user
+
+        #taking phone number input from user
+        area, code1, code2  = self.getTLFN()
+        phoneNumber = area+code1+code2
+
+        file = open("Carrierlookup.txt", "r")
+        lookUPTable = {}
+        for line in file:
+            x = line.split(",")
+            a = x[0]
+            b = x[1]
+            c = len(b)-1     #get rid of \n
+            b = b[0:c]       #new b without \n
+            lookUPTable[a] = b
+
+        #TODO get the users carrier input
+
+        usersCarrier = "Verizon"
+
+        for key in lookUPTable:
+            if(key ==usersCarrier):
+                smsGateway = lookUPTable[key]
+
+
+        msg['to'] = phoneNumber+smsGateway
+
+
+        ##setting server
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
         server.login(user, password)
         server.send_message(msg)
         server.quit()
-
 
 class CarrierDropDown(DropDown):
     """Used to select which phone carrier to use."""
