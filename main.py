@@ -142,14 +142,10 @@ class ThermoApp(App):
         self.textCooldown = max(self.textCooldown-1, 0)
         if y[-1]:
             if y[-1] >= self.upper and self.textCooldown < 1:
-                self.msgAlert(
-                    "Alert", "Tempterature is above upper limit.",
-                    "--------@txt.att.net")
+                self.msgAlert("Tempterature is above upper limit.")
                 self.textCooldown = 60
             if y[-1] <= self.lower and self.textCooldown < 1:
-                self.msgAlert(
-                    "Alert", "Tempterature is below lower limit.",
-                    "--------@txt.att.net")
+                self.msgAlert("Tempterature is below lower limit.")
                 self.textCooldown = 60
         return line,
 
