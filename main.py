@@ -157,6 +157,10 @@ class ThermoApp(App):
         fig.canvas.draw()
         fig.canvas.flush_events()
 
+    def setCarrier(self, newKey):
+        self.carrierKey = newKey
+        setattr(self.carrierDropButton, 'text', carrierDict[newKey])
+
 # Here's how to do error messages with Logger
 # Logger.exception('Pictures: Unable to load <%s>' % filename)
 
@@ -169,11 +173,13 @@ class ThermoApp(App):
         box.add_widget(FigureCanvasKivyAgg(plt.gcf()))
         Clock.schedule_interval(self.animationTick, 0.5)
 
-        carrierDropButton = root.ids.carrierDropButton
+        self.carrierDropButton = root.ids.carrierDropButton
         dropdown = root.ids.carrierDrop
-        carrierDropButton.bind(on_press=dropdown.open)
+        self.carrierDropButton.bind(on_press=dropdown.open)
         dropdown.bind(on_select=lambda instance, x:
-                      setattr(carrierDropButton, 'text', carrierDict[x]))
+                      self.setCarrier(x))
+        self.carrierKey = list(carrierDict.keys())[0]
+
         y = [null() for w in range(listLength)]
 
         self.lower = -5
