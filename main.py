@@ -109,8 +109,7 @@ def newReadLine():
         except:
             data.flush()
         # Clear the data buffer... we dont want to be using old sensor data
-        #data.readline(1024)
-
+        # data.readline(1024)
 
 
 class ThermoApp(App):
@@ -166,9 +165,6 @@ class ThermoApp(App):
         self.carrierKey = newKey
         setattr(self.carrierDropButton, 'text', carrierDict[newKey])
 
-# Here's how to do error messages with Logger
-# Logger.exception('Pictures: Unable to load <%s>' % filename)
-
     def build(self):
         """Bind controls and major elements to instance variables."""
         global y
@@ -201,6 +197,7 @@ class ThermoApp(App):
         return True
 
     def tryUpdateUpper(self, e, s):
+        """Attempt to change upper bound to int value of string."""
         try:
             f = float(s)
             self.upper = f
@@ -208,6 +205,7 @@ class ThermoApp(App):
             pass
 
     def tryUpdateLower(self, e, s):
+        """Attempt to change lower bound to int value of string."""
         try:
             f = float(s)
             self.lower = f
@@ -219,9 +217,9 @@ class ThermoApp(App):
         print("burf")
         serialPort.write(1)
 
-        # TODO: Error popup on invalid number
     def sendMessageBTN(self):
         """Buttonpress method for Send Message."""
+        # TODO: Error popup on invalid number
         area, code1, code2 = self.getTLFN()  # Each of these is a string
 
         print(area)
@@ -287,3 +285,6 @@ class NumericInput(TextInput):
 
 if __name__ == '__main__':
     ThermoApp().run()
+
+# Here's how to do error messages with Logger
+# Logger.exception('Pictures: Unable to load <%s>' % filename)
