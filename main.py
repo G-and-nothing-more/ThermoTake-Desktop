@@ -23,11 +23,11 @@ from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 #       correct COM port on your machine.
 ###
 
-port = 'COM6'
+port = 'COM5'
 serialPort, data = 0,0
 if platform not in "linux, linux2":
     serialPort = serial.Serial(port=port, baudrate=9600, timeout=1, stopbits=1)
-    data = io.TextIOWrapper(io.BufferedRWPair(serialPort, serialPort, 1), newline="\r\n", line_buffering=True)
+    data = io.TextIOWrapper(io.BufferedRWPair(serialPort, serialPort, 1), newline="\r\n", line_buffering=False)
 
 kivy.require('2.0.0')
 
@@ -71,11 +71,14 @@ def newReadLine():
 
         # Split the data from message and checksum (original rcv should be "double:int")
         transmission = rcv.split(':')
+        serialPort.flushInput()
+        serialPort.flushOutput()
 
         # try to parse the data into numerals from string
 
         try:
             msg = float(transmission[0])
+
             checkSum = int(transmission[1])
 
             # If the mod 64 checkSum matches, print the msg
@@ -94,7 +97,8 @@ def newReadLine():
         except:
             data.flush()
         # Clear the data buffer... we dont want to be using old sensor data
-        data.flush()
+        #data.readline(1024)
+
 
 
 class ThermoApp(App):
@@ -107,8 +111,9 @@ class ThermoApp(App):
             newData = 20
         if (newData):
             if (newData == -127):
+                self.addNewValue(null())
                 print('error')
-            else:
+            elif (newData >= -10 and newData <= 100):
                 self.addNewValue(newData)
 
     def addNewValue(self, _y):
@@ -155,7 +160,7 @@ class ThermoApp(App):
         box = root.ids.graphBox
         box.add_widget(FigureCanvasKivyAgg(plt.gcf()))
         Clock.schedule_interval(self.animationTick, 0.5)
-        self.animationTick(0.5)
+
         carrierDropButton = root.ids.carrierDropButton
         dropdown = root.ids.carrierDrop
         carrierDropButton.bind(on_press=dropdown.open)
@@ -170,6 +175,7 @@ class ThermoApp(App):
         root.ids.lowerText.bind(text=self.tryUpdateLower)
         root.ids.upperText.text = str(self.upper)
         root.ids.lowerText.text = str(self.lower)
+        self.animationTick(0.5)
         # ...stuff with root
 
     def on_pause(self):
@@ -193,6 +199,7 @@ class ThermoApp(App):
     def activateDisplayBTN(self):
         """Buttonpress method for Display."""
         print("burf")
+        serialPort.write(1)
 
         # TODO: Error popup on invalid number
     def sendMessageBTN(self):
