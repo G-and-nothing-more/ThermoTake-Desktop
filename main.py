@@ -43,9 +43,9 @@ listLength = 600
 x = [w/2 for w in range(-1 * listLength, 0, 1)]
 y = [w for w in range(listLength)]
 
-lines = open("Carrierlookup.txt").readlines()
+carrierLines = open("Carrierlookup.txt").readlines()
 carrierDict = dict()
-for line in lines:
+for line in carrierLines:
     tup = line.split(',')
     carrierDict[tup[1].strip()] = tup[0].strip()
 debugDict = {"hrw": "Horseradish Wireless",
@@ -180,7 +180,7 @@ class ThermoApp(App):
         dropdown.bind(on_select=lambda instance, x:
                       self.setCarrier(x))
         self.carrierKey = list(carrierDict.keys())[0]
-        # Clock.schedule_once(lambda x: dropdown.open(self.carrierDropButton), 0.5)
+        Clock.schedule_once(lambda x: self.carrierDropButton.on_press, 0.5) # TODO: Doesn't fuckin work
 
         y = [null() for w in range(listLength)]
         self.status = "Nominal"
@@ -247,7 +247,7 @@ class ThermoApp(App):
         #     c = len(b)-1     #get rid of \n
         #     b = b[0:c]       #new b without \n
         #     d[a] = b
-        d = {w.split(',')[0] : (w.split(',')[1]).strip() for w in lines}
+        d = {w.split(',')[0]: (w.split(',')[1]).strip() for w in file.readlines()}
         user = d["gmail"]
         password = d["password"]
         msg.set_content(text)
@@ -258,27 +258,27 @@ class ThermoApp(App):
         area, code1, code2 = self.getTLFN()
         phoneNumber = area+code1+code2
 
-        file = open("Carrierlookup.txt", "r")
-        lookUPTable = {}
-        for line in file:
-            x = line.split(",")
-            a = x[0]
-            b = x[1]
-            c = len(b)-1     #get rid of \n
-            b = b[0:c]       #new b without \n
-            lookUPTable[a] = b
+        # file = open("Carrierlookup.txt", "r")
+        # lookUPTable = {}
+        # for line in file:
+        #     x = line.split(",")
+        #     a = x[0]
+        #     b = x[1]
+        #     c = len(b)-1     #get rid of \n
+        #     b = b[0:c]       #new b without \n
+        #     lookUPTable[a] = b
 
-        #TODO get the users carrier input
+        # usersCarrier = carr
 
-        usersCarrier = "Verizon"
+        # for key in lookUPTable:
+        #     if(key ==usersCarrier):
+        #         smsGateway = lookUPTable[key]
 
-        for key in lookUPTable:
-            if(key ==usersCarrier):
-                smsGateway = lookUPTable[key]
+        # msg['to'] = phoneNumber+smsGateway
+        msg['to'] = phoneNumber+self.carrierKey
+        print("Sending text to: " + msg['to'])
 
-        msg['to'] = phoneNumber+smsGateway
-
-        ##setting server
+        # setting server
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
         server.login(user, password)
